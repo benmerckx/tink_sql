@@ -9,6 +9,8 @@ import tink.sql.Types;
 import tink.sql.format.Sanitizer;
 import tink.streams.Stream;
 import tink.sql.format.MySqlFormatter;
+import tink.sql.expr.ExprTyper;
+import tink.sql.parse.ResultParser;
 
 using tink.CoreApi;
 
@@ -45,11 +47,13 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
   var cnx:NativeConnection;
   var db:Db;
   var formatter:MySqlFormatter;
+  var parser:ResultParser<Db>;
 
   public function new(db, cnx) {
     this.db = db;
     this.cnx = cnx;
     this.formatter = new MySqlFormatter(this);
+    this.parser = new ResultParser(new ExprTyper(db));
   }
 
   public function value(v:Any):String
@@ -68,9 +72,14 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
     inline function fetch<T>(): Promise<T> return run(queryOptions(query));
     return switch query {
       case Select(_) | Union(_): 
-        Stream.promise(fetch().next(function (res)
-          return Stream.ofIterator(rowIterator(res, formatter.isNested(query)))
-        ));
+        Stream.promise(fetch().next(function (res:Array<Any>) {
+          var iterator = res.iterator();
+          return Stream.ofIterator({
+            hasNext: function() return iterator.hasNext(),
+            next: function ()
+              return parser.parseResult(query, iterator.next(), formatter.isNested(query))
+          });
+        }));
       case CreateTable(_, _) | DropTable(_) | AlterTable(_, _):
         fetch().next(function(_) return Noise);
       case Insert(_):
@@ -111,83 +120,13 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
 
   function typeCast(field, next): Any {
     return switch field.type {
-      case 'BLOB':
-        switch (field.buffer():Buffer) {
+      case 'BLOB' | 'GEOMETRY': 
+        switch (field.buffer(): Buffer) {
           case null: null;
-          case buf:
-            // MySQL.js sometimes returns TEXT fields as BLOB, see https://github.com/mysqljs/mysql#string
-            var columns = [for (f in db.tableInfo(field.table).getColumns()) f];
-            var column = columns.filter(function (f) return f.name == field.name)[0];
-            if (column == null) {
-              throw 'Failed to find type of ${field.table}.${field.name}';
-            }
-            switch column.type {
-              case DText(_, _), DString(_, _):
-                buf.toString();
-              case _:
-                buf.hxToBytes();
-            }
+          case v: v.hxToBytes();
         }
-      case 'TINY' if(field.length == 1):
-        switch field.string() {
-          case null: null;
-          case v: v != '0';
-        }
-      case 'GEOMETRY':
-        var v:Dynamic = field.geometry();
-        // https://github.com/mysqljs/mysql/blob/310c6a7d1b2e14b63b572dbfbfa10128f20c6d52/lib/protocol/Parser.js#L342-L389
-        if(v == null) {
-          null;
-        } else {
-            if(Std.is(v, Array)) {
-              if(Std.is(v[0], Array)) {
-                if(Std.is(v[0][0], Array)) {
-                  new geojson.MultiPolygon(
-                    [for(polygon in (v:Array<Dynamic>))
-                      [for(line in (polygon:Array<Dynamic>))
-                        [for(point in (line:Array<Dynamic>))
-                          new geojson.util.Coordinates(point.y, point.x)
-                        ]
-                      ]
-                    ]
-                  );
-                } else {
-                  // Polygon
-                  throw 'Polygon parsing not implemented';
-                }
-              } else {
-                // Line
-                throw 'Line parsing not implemented';
-              }
-            } else {
-              // Point
-              new geojson.Point(v.y, v.x);
-            }
-        }
-      default:
-        next();
+      default: next();
     }
-  }
-
-  function rowIterator<A>(result:Array<DynamicAccess<DynamicAccess<Any>>>, nest = false):Iterator<A> {
-    var result:Array<A> =
-      if (!nest) cast result
-      else [for (row in result) {
-        var rowCopy: DynamicAccess<DynamicAccess<Any>> = {};
-        for (partName in row.keys()) {
-          var part = row[partName],
-              notNull = false;
-          for (name in part.keys())
-            if (part[name] != null) {
-              notNull = true;
-              break;
-            }
-          if (notNull)
-            rowCopy[partName] = part;
-        }
-        (cast rowCopy : A);
-      }];
-    return result.iterator();
   }
 
 }

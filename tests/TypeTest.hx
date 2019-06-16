@@ -39,8 +39,8 @@ class TypeTest extends TestWithDb {
 			.next(function(row:Types) {
 				asserts.assert(row.int == 123);
 				asserts.assert(row.text == 'mytext');
-				//asserts.assert(row.date.getTime() == mydate.getTime());
-				//asserts.assert(row.blob.toHex() == '6d79626c6f62');
+				asserts.assert(row.date.getTime() == mydate.getTime());
+				asserts.assert(row.blob.toHex() == '6d79626c6f62');
 				asserts.assert(row.boolTrue == true);
 				asserts.assert(row.boolFalse == false);
 				

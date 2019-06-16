@@ -1,10 +1,10 @@
 sudo: required
-dist: trusty
+dist: xenial
 
 addons:
   apt:
     sources:
-      - mysql-5.7-trusty
+      - mysql-5.7-xenial
       - sourceline: 'ppa:ondrej/php'
     packages:
       - mysql-server

@@ -35,7 +35,7 @@ class MySqlFormatter extends SqlFormatter<MysqlColumnInfo, MysqlKeyInfo> {
     }
 
   override function toDataType(type:SqlType):DataType {
-    inline function parseDefault<T>(parser:String -> T): T
+    inline function parseDefault<T>(parser:String -> T): Null<T>
       return if (type.defaultValue == null) null else parser(type.defaultValue);
     return switch type {
       case {name: 'TINYINT', values: ['1']}:

@@ -1,8 +1,8 @@
 package tink.sql;
 
 private typedef LimitData = {
-  var limit(default, null):Int;
-  var offset(default, null):Int;
+  var limit(default, null):Null<Int>;
+  var offset(default, null):Null<Int>;
 }
 
 @:forward

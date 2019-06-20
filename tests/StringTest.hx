@@ -29,7 +29,7 @@ class StringTest extends TestWithDb {
     function desc(length: Int)
       return 'compare strings of length $length';
     var future = db.StringTypes.insertOne({
-      id: null,
+      id: cast null,
       text10: generateString(10),
       text255: generateString(255),
       text999: generateString(999),

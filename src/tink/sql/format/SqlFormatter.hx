@@ -6,6 +6,7 @@ import tink.sql.Selection;
 import tink.sql.Target;
 import tink.sql.OrderBy;
 import tink.sql.Expr;
+import tink.sql.format.Statement;
 import haxe.DynamicAccess;
 
 using Lambda;
@@ -18,7 +19,7 @@ class SqlFormatter<ColInfo, KeyInfo> implements Formatter<ColInfo, KeyInfo> {
     this.sanitizer = sanitizer;
   }
 
-  public function format<Db, Result>(query:Query<Db, Result>):String
+  public function format<Db, Result>(query:Query<Db, Result>):Statement
     return switch query {
       case CreateTable(table, ifNotExists): createTable(table, ifNotExists);
       case DropTable(table): dropTable(table);

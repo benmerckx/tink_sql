@@ -29,11 +29,11 @@ class TypeTest extends TestWithDb {
 			boolTrue: true,
 			boolFalse: false,
 			
-			nullInt: null,
-			nullText: null,
-			nullBlob: null,
-			nullDate: null,
-			nullBool: null,
+			nullInt: cast null,
+			nullText: cast null,
+			nullBlob: cast null,
+			nullDate: cast null,
+			nullBool: cast null,
 		})
 			.next(function(id:Int) return db.Types.first())
 			.next(function(row:Types) {

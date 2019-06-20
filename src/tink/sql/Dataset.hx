@@ -6,6 +6,7 @@ import tink.sql.Query;
 
 using tink.CoreApi;
 
+@:allow(tink.sql)
 class Selectable<Fields, Filter, Result: {}, Db> extends FilterableWhere<Fields, Filter, Result, Db> {
   
   macro public function select(ethis, select) {
@@ -29,6 +30,7 @@ class Selectable<Fields, Filter, Result: {}, Db> extends FilterableWhere<Fields,
 
 }
 
+@:allow(tink.sql)
 class FilterableWhere<Fields, Filter, Result: {}, Db> extends Orderable<Fields, Filter, Result, Db> {
 
   macro public function where(ethis, filter) {
@@ -41,6 +43,7 @@ class FilterableWhere<Fields, Filter, Result: {}, Db> extends Orderable<Fields, 
 
 }
 
+@:allow(tink.sql)
 class FilterableHaving<Fields, Filter, Result: {}, Db> extends Orderable<Fields, Filter, Result, Db> {
 
   macro public function having(ethis, filter) {
@@ -56,6 +59,7 @@ class FilterableHaving<Fields, Filter, Result: {}, Db> extends Orderable<Fields,
 
 }
 
+@:allow(tink.sql)
 class Orderable<Fields, Filter, Result: {}, Db> extends Selected<Fields, Filter, Result, Db> {
 
   // This is used in macros.Filters so needs to be available on all results
@@ -70,6 +74,7 @@ class Orderable<Fields, Filter, Result: {}, Db> extends Selected<Fields, Filter,
 
 }
 
+@:allow(tink.sql)
 class Selected<Fields, Filter, Result:{}, Db> extends Limitable<Fields, Result, Db> {
   
   public var fields(default, null):Fields;

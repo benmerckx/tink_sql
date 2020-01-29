@@ -61,8 +61,10 @@ class PDOConnection<Db:DatabaseInfo> implements Connection<Db> implements Saniti
     return cnx.quote(v);
   }
 
-  public function ident(s:String):String
+  public function ident(s:String):String {
+    if (s.indexOf("`") == -1) return "`"+s+"`";
     return tink.sql.drivers.MySql.getSanitizer(null).ident(s);
+  }
 
   public function getFormatter()
     return formatter;

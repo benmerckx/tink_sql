@@ -10,6 +10,20 @@ import haxe.io.BytesInput;
 
 using tink.CoreApi;
 
+#if php
+private class Proxy {
+  var resolved = new php.NativeAssocArray<Dynamic>();
+  var get: (property: String) -> Dynamic;
+  public function new(get) this.get = get;
+  @:keep @:phpMagic function __get(name:String) {
+    return php.Global.array_key_exists(name, resolved)
+      ? resolved[name]
+      : resolved[name] = get(name);
+  }
+}
+#end
+
+@:access(tink.sql.expr.ExprTyper)
 class ResultParser<Db> {
 
   var typer:ExprTyper;
@@ -69,6 +83,8 @@ class ResultParser<Db> {
         Std.parseInt(value);
       case Some(ValueType.VDate) if (Std.is(value, String)):
         Date.fromString(value);
+      case Some(ValueType.VDate) if (Std.is(value, Float)):
+        Date.fromTime(value);
       #if js 
       case Some(ValueType.VBytes) if (Std.is(value, js.node.Buffer)):
         (value: js.node.Buffer).hxToBytes();
@@ -82,6 +98,29 @@ class ResultParser<Db> {
       default: value;
     }
   }
+
+  #if php
+  public function lazyParser<Row:{}>(
+    query:Query<Db, Dynamic>,
+    nest:Bool
+  ): DynamicAccess<Any> -> Row {
+    var types = typer.typeQuery(query);
+    return function (row: DynamicAccess<Any>) {
+      function resolveField(name: String) {
+        return parseValue(row[name], 
+          switch types.get(name) {
+            case null: None;
+            case v: v;
+          }
+        );
+      }
+      if (!nest) return cast new Proxy(resolveField);
+      return cast new Proxy(function (table: String) {
+        return new Proxy(name -> resolveField(table+SqlFormatter.FIELD_DELIMITER+name));
+      });
+    }
+  }
+  #end
 
   public function queryParser<Row:{}>(
     query:Query<Db, Dynamic>,

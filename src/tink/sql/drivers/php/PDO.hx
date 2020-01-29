@@ -73,7 +73,7 @@ class PDOConnection<Db:DatabaseInfo> implements Connection<Db> implements Saniti
       case Select(_) | Union(_) | CallProcedure(_): 
         Stream.promise(fetch().next(function (res:PDOStatement) {
           var row: Any;
-          var parse = parser.queryParser(query, formatter.isNested(query));
+          var parse = parser.lazyParser(query, formatter.isNested(query));
           return Stream.ofIterator({
             hasNext: function() {
               row = res.fetchObject();
@@ -109,7 +109,7 @@ class PDOConnection<Db:DatabaseInfo> implements Connection<Db> implements Saniti
   public function syncResult<R, T: {}>(query:Query<Db,R>): Outcome<Array<T>, Error> {
     return switch query {
       case Select(_) | Union(_) | CallProcedure(_): 
-        var parse = parser.queryParser(query, formatter.isNested(query));
+        var parse = parser.lazyParser(query, formatter.isNested(query));
         try Success([
           for (row in cnx.query(formatter.format(query)).fetchAll(PDO.FETCH_OBJ))
             parse(row)

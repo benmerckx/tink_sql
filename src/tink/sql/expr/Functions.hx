@@ -17,6 +17,9 @@ class Functions {
   public static function min<D,O>(e:Field<D,O>):Expr<D> 
     return ECall('MIN', cast [e]);
 
+  public static function replace(source:Expr<String>, find:Expr<String>, replaceWith:Expr<String>):Expr<String>
+    return ECall('REPLACE', cast [source, find, replaceWith]);
+
   public static function stContains<T>(g1:Expr<Geometry>, g2:Expr<Geometry>):Expr<Bool>
     return ECall('ST_Contains', cast [g1, g2]);
 

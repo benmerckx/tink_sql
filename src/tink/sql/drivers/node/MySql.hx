@@ -96,9 +96,7 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
         fetch().next(function(_) return Noise);
       case Insert(_):
         fetch().next(function(res) return new Id(res.insertId));
-      case Update(_):
-        fetch().next(function(res) return {rowsAffected: (res.changedRows: Int)});
-      case Delete(_):
+      case Update(_) | Delete(_):
         fetch().next(function(res) return {rowsAffected: (res.affectedRows: Int)});
       case ShowColumns(_):
         fetch().next(function(res:Array<MysqlColumnInfo>) 

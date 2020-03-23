@@ -10,12 +10,21 @@ class Functions {
   // Todo: count can also take an Expr<Bool>
   public static function count<D,O>(?e:Field<D,O>):Expr<Int> 
     return ECall('COUNT', if (e == null) cast [EValue(true, VBool)] else cast [e]);
+
+  public static function sum<T:Float,O>(e:Field<T,O>):Expr<T> 
+    return ECall('SUM', cast [e]);
+
+  public static function round<T:Float>(e:Expr<T>):Expr<Int> 
+    return ECall('ROUND', cast [e]);
     
   public static function max<D,O>(e:Field<D,O>):Expr<D> 
     return ECall('MAX', cast [e]);
   
   public static function min<D,O>(e:Field<D,O>):Expr<D> 
     return ECall('MIN', cast [e]);
+
+  public static function concat(es:Array<Expr<String>>):Expr<String> 
+    return ECall('CONCAT', cast es);
 
   public static function replace(source:Expr<String>, find:Expr<String>, replaceWith:Expr<String>):Expr<String>
     return ECall('REPLACE', cast [source, find, replaceWith]);

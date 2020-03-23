@@ -278,4 +278,8 @@ typedef Scalar<T> = Dataset<SingleField<T, Dynamic>, Dynamic, Dynamic>;
   
   @:from static function ofScalar<T>(s:Scalar<T>):Expr<T>
     return s.toScalarExpr();
+
+  @:op(a in b)
+  public function inScalar<T>(b:Scalar<T>):Condition
+    return EBinOp(In, this, b.toExpr());
 }

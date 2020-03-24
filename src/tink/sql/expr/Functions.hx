@@ -26,6 +26,9 @@ class Functions {
   public static function concat(es:Array<Expr<String>>):Expr<String> 
     return ECall('CONCAT', cast es);
 
+  public static function dateFormat(date:Expr<Date>, format:Expr<String>):Expr<String> 
+    return ECall('DATE_FORMAT', [cast date, cast format]);
+
   public static function replace(source:Expr<String>, find:Expr<String>, replaceWith:Expr<String>):Expr<String>
     return ECall('REPLACE', cast [source, find, replaceWith]);
 

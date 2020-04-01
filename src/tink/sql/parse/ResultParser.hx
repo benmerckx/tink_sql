@@ -20,6 +20,9 @@ private class Proxy {
       ? resolved[name]
       : resolved[name] = get(name);
   }
+  @:keep @:phpMagic function __isset(name:String) {
+    return true;
+  }
 }
 #end
 

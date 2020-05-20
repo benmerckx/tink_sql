@@ -39,7 +39,11 @@ class MySql implements Driver {
       connectionLimit: settings.connectionLimit,
       charset: settings.charset,
     });
-
+    // Workaround haxetink/tink_sql#108 and haxetink/tink_sql#109 for now
+    // by disabling ONLY_FULL_GROUP_BY
+    cnx.on('connection', function (connection) {
+      connection.query({sql: "SET sql_mode = ''"});
+    });
     return new MySqlConnection(info, cnx);
   }
 }
@@ -53,7 +57,7 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
 
   public function new(db, cnx) {
     this.db = db;
-    this.cnx = cnx;
+    this.cnx = cnx;    
     this.formatter = new MySqlFormatter(this);
     this.parser = new ResultParser(new ExprTyper(db));
   }
@@ -163,6 +167,7 @@ private typedef QueryOptions = {
 }
 
 private typedef NativeConnection = {
-  function query(q: QueryOptions, cb:JsError->Dynamic->Void):Void;
+  function query(q: QueryOptions, ?cb:JsError->Dynamic->Void):Void;
+  function on(event:String, cb:NativeConnection->Void):Void;
   //function release():Void; -- doesn't seem to work
 }

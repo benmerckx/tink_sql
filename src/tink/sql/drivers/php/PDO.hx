@@ -50,6 +50,9 @@ class PDOConnection<Db:DatabaseInfo> implements Connection<Db> implements Saniti
     this.db = db;
     this.cnx = cnx;
     cnx.setAttribute(PDO.ATTR_ERRMODE, PDO.ERRMODE_EXCEPTION);
+    // Workaround haxetink/tink_sql#108 and haxetink/tink_sql#109 for now
+    // by disabling ONLY_FULL_GROUP_BY
+    cnx.exec("SET sql_mode = ''");
     this.formatter = new MySqlFormatter(this);
     this.parser = new ResultParser(new ExprTyper(db));
   }

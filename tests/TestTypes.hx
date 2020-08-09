@@ -1,22 +1,10 @@
-package;
-
-import Db;
-
-using tink.CoreApi;
+package tests;
 
 @:asserts
 @:allow(tink.unit)
-class TypeTest extends TestWithDb {
-	
-	@:before
-	public function createTable() {
-		return db.Types.create();
-	}
-	
-	@:after
-	public function dropTable() {
-		return db.Types.drop();
-	}
+class TestTypes extends Test {
+	@:before public function createTable() return db.Types.create();
+	@:after	public function dropTable() return db.Types.drop();
 	
 	public function insert() {
 		var mydate = new Date(2000, 0, 1, 0, 0, 0);

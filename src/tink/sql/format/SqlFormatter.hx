@@ -265,6 +265,7 @@ class SqlFormatter<ColInfo, KeyInfo> implements Formatter<ColInfo, KeyInfo> {
 
   function select<Db, Row:{}>(select:SelectOperation<Db, Row>)
     return sql('SELECT')
+      .add('DISTINCT', select.distinct == true)
       .add(selection(select.from, select.selection))
       .add('FROM')
       .add(target(select.from))

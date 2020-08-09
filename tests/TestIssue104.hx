@@ -1,7 +1,6 @@
+package tests;
+
 import tink.sql.Database;
-
-import tink.unit.Assert.assert;
-
 import tink.sql.Types;
 
 private typedef Customer = {

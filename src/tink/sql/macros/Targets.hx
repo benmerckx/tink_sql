@@ -28,7 +28,8 @@ class Targets {
                 for (field in originalFields) 
                   aliasFields.push({
                     field: field.name, 
-                    expr: macro new tink.sql.Expr.Field($v{name}, $v{field.name})
+                    expr: macro new tink.sql.Expr.Field(
+                      $v{name}, $v{field.name})
                   });
               default: throw "assert";
             }

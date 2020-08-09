@@ -1,14 +1,13 @@
-package;
+package tests;
 
-import Run.loadFixture;
 import tink.unit.AssertionBuffer;
 import tink.sql.Info;
 
 @:asserts
-class SchemaTest extends TestWithDb {
+class TestSchema extends Test {
 
 	function check(asserts: AssertionBuffer, version, inspect) {
-		loadFixture('schema_$version');
+		Fixture.load('schema_$version');
 		var changes;
 		return db.Schema.diffSchema(true)
 			.next(function (changes) {

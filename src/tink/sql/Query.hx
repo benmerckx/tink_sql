@@ -31,6 +31,7 @@ typedef UnionOperation<Db, Row:{}> = {
 
 typedef SelectOperation<Db, Row:{}> = {
   from:Target<Row, Db>,
+  ?distinct:Bool,
   ?selection:Selection<Row, Any>,
   ?where:Condition,
   ?limit:Limit,

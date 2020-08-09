@@ -3,5 +3,4 @@
 -lib tink_unittest
 -lib tink_await
 -lib geojson
--cp tests
--main Run
+-main tests.Run

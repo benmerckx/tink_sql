@@ -1,4 +1,4 @@
-package;
+package tests;
 
 import tink.s2d.*;
 import tink.s2d.Point.latLng as point;
@@ -8,7 +8,7 @@ import tink.unit.Assert.assert;
 using tink.CoreApi;
 
 @:asserts
-class GeometryTest extends TestWithDb {
+class TestGeometry extends Test {
 	
 	@:before
 	public function createTable() {

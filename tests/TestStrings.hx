@@ -1,14 +1,12 @@
-package;
+package tests;
 
-import Db;
 import tink.sql.Info;
-import tink.unit.Assert.assert;
 
 using tink.CoreApi;
 
 @:asserts
 @:allow(tink.unit)
-class StringTest extends TestWithDb {
+class TestStrings extends Test {
 
   @:before
   public function createTable() {

@@ -1,4 +1,4 @@
-package;
+package tests;
 
 import tink.sql.Types;
 
@@ -104,7 +104,13 @@ typedef StringTypes = {
   public var textLong(default, null): LongText;
 }
 
-@:tables(User, Post, PostTags, Types, Geometry, Schema, StringTypes)
+typedef UniqueTable = {
+  @:unique var u1(default, null):VarChar<123>;
+  @:unique('index_name1') var u2(default, null):VarChar<123>;
+  @:unique('index_name1') var u3(default, null):VarChar<123>;
+}
+
+@:tables(User, Post, PostTags, Types, Geometry, Schema, StringTypes, UniqueTable)
 class Db extends tink.sql.Database {
   @:procedure var func:Int->{x:Int, point:tink.s2d.Point};
   @:table('alias') var PostAlias: Post;

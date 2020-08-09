@@ -1,9 +1,6 @@
-package;
+package tests;
 
-import Db;
-import tink.unit.Assert.assert;
-
-class ExprTest extends TestWithDb {
+class TestExpr extends Test {
 	
 	public function expr() {
 		// these should compile:

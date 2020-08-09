@@ -1,12 +1,10 @@
-package;
-
-import Run.loadFixture;
+package tests;
 
 @:asserts
-class ProcedureTest extends TestWithDb {
+class TestProcedure extends Test {
   
   public function test() {
-    loadFixture('procedure');
+    Fixture.load('procedure');
     db.func.call(1).all().handle(function(o) switch o {
       case Success(result):
         asserts.assert(result.length == 2);
@@ -24,7 +22,7 @@ class ProcedureTest extends TestWithDb {
   }
   
   public function limit() {
-    loadFixture('procedure');
+    Fixture.load('procedure');
     db.func.call(1).first().handle(function(o) switch o {
       case Success(result): 
         asserts.assert(result.x == 1);

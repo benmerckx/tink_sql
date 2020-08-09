@@ -1,31 +1,26 @@
-package;
+package tests;
 
-import tink.unit.Assert.assert;
-import tink.sql.OrderBy;
-import tink.sql.Types;
 import tink.sql.Expr;
 import tink.sql.Expr.Functions.*;
-import Db;
 
 using tink.CoreApi;
 
 @:asserts
-class SubQueryTest extends TestWithDb {
+class TestSubquery extends Test {
 	
 	@:setup @:access(Run)
 	public function setup() {
-		var run = new Run(driver, db);
 		return Promise.inParallel([
 			db.Post.create(),
 			db.User.create(),
 			db.PostTags.create()
 		])
-		.next(function (_) return run.insertUsers())
+		.next(function (_) return insertUsers())
 		.next(function(_) return Promise.inSequence([
-			run.insertPost('test', 'Alice', ['test', 'off-topic']),
-			run.insertPost('test2', 'Alice', ['test']),
-			run.insertPost('Some ramblings', 'Alice', ['off-topic']),
-			run.insertPost('Just checking', 'Bob', ['test']),
+			insertPost('test', 'Alice', ['test', 'off-topic']),
+			insertPost('test2', 'Alice', ['test']),
+			insertPost('Some ramblings', 'Alice', ['off-topic']),
+			insertPost('Just checking', 'Bob', ['test']),
     ]));
 	}
 	

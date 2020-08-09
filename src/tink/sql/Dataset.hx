@@ -87,8 +87,9 @@ class Selected<Fields, Filter, Result:{}, Db> extends Limitable<Fields, Result, 
   var condition:{?where:Condition, ?having:Condition} = {}
   var grouped:Null<Array<Field<Dynamic, Result>>>;
   var order:Null<OrderBy<Result>>;
+  var selectDistinct:Null<Bool>;
   
-  function new(cnx, fields, target, toCondition, ?condition, ?selection, ?grouped, ?order) {
+  function new(cnx, fields, target, toCondition, ?condition, ?selection, ?grouped, ?order, ?selectDistinct) {
     super(cnx);
     this.fields = fields;
     this.target = target;
@@ -97,10 +98,12 @@ class Selected<Fields, Filter, Result:{}, Db> extends Limitable<Fields, Result, 
     this.selection = selection;
     this.grouped = grouped;
     this.order = order;
+    this.selectDistinct = selectDistinct;
   }
 
   override function toQuery(?limit:Limit):Query<Db, RealStream<Result>>
     return Select({
+      distinct: selectDistinct,
       from: target,
       selection: selection,
       where: condition.where,
@@ -109,6 +112,12 @@ class Selected<Fields, Filter, Result:{}, Db> extends Limitable<Fields, Result, 
       groupBy: grouped,
       orderBy: order
     });
+
+  public function distinct(selectDistinct = true)
+    return new Selected(
+      cnx, fields, target, toCondition, condition, 
+      selection, grouped, order, selectDistinct
+    );
 
   public function count():Promise<Int>
     return cnx.execute(Select({

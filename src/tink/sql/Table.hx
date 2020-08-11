@@ -123,13 +123,12 @@ class TableSource<Fields, Filter:(Fields->Condition), Row:{}, Db>
   public function getKeys():Array<Key> 
     throw 'not implemented';
 
-
   // Create a runtime alias
   public function alias(alias:String) {
-    return new TableSource<FieldsAlias<Fields>, (fields: FieldsAlias<Fields>) -> Condition, Row, Db>(
+    return new TableSource<Fields, (_:Fields)->Condition, Row, Db>(
       cnx, name, alias, 
-      new FieldsAlias(alias, fields), 
-      columns
+      FieldsAlias.create(alias, fields), 
+      getColumns()
     );
   }
 

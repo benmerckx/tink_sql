@@ -1,5 +1,6 @@
 package tink.sql;
 
+import haxe.DynamicAccess;
 import tink.sql.Expr;
 
 typedef Alias<T> = {
@@ -7,18 +8,15 @@ typedef Alias<T> = {
   fields:T
 }
 
-abstract FieldsAlias<T>(Alias<T>) {
-  public function new(alias, fields) {
-    this = {
-      alias: alias,
-      fields: fields
+class FieldsAlias {
+  public static function create<Fields>(alias:String, fields:Fields):Fields {
+    var res: DynamicAccess<ExprData<Dynamic>> = cast fields;
+    for (name => field in res) {
+      res[name] = switch field {
+        case EField(_, name): new Field(alias, name);
+        default: null;
+      }
     }
+    return cast res;
   }
-  
-  @:op(a.b) public function read<F, O>(name:String)
-    return switch (cast Reflect.field(this.fields, name): ExprData<F>) {
-      case null: null;
-      case EField(_, name): new Field(this.alias, name);
-      default: null;
-    }
 }

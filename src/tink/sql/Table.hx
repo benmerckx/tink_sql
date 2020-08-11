@@ -123,8 +123,17 @@ class TableSource<Fields, Filter:(Fields->Condition), Row:{}, Db>
   public function getKeys():Array<Key> 
     throw 'not implemented';
 
-  // Alias
 
+  // Create a runtime alias
+  public function alias(alias:String) {
+    return new TableSource<FieldsAlias<Fields>, (fields: FieldsAlias<Fields>) -> Condition, Row, Db>(
+      cnx, name, alias, 
+      new FieldsAlias(alias, fields), 
+      columns
+    );
+  }
+
+  // Alias
   macro public function as(e:Expr, alias:String) {
     return switch haxe.macro.Context.typeof(e) {
       case TInst(_.get() => { superClass: _.params => [fields, _, row, _] }, _):

@@ -147,7 +147,7 @@ class MySqlConnection<Db:DatabaseInfo> implements Connection<Db> implements Sani
 
 }
 
-@:jsRequire("mysql")
+@:jsRequire("@vlasky/mysql")
 private extern class NativeDriver {
   static function escape(value:Any):String;
   static function escapeId(ident:String):String;
